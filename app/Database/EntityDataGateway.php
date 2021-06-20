@@ -17,8 +17,8 @@ class EntityDataGateway
 	{
 		$statement = $this->pdo->prepare(
 			"INSERT INTO entitys(first_name, surname, gender, group_number, 
-                                            email, exam_score, birth_year, residence)
-                       VALUES (:name, :sname, :gender, :groupnum, :email, :examscore, :byear, :residence)"
+                                            email, exam_score, birth_year, residence, hash)
+                       VALUES (:name, :sname, :gender, :groupnum, :email, :examscore, :byear, :residence, :hash)"
 		);
 		$statement->execute(array(
 			"name" => $entity->getName(),
@@ -28,7 +28,8 @@ class EntityDataGateway
 			"email" => $entity->getEmail(),
 			"examscore" => $entity->getExamScore(),
 			"byear" => $entity->getBirthYear(),
-			"residence" => $entity->getResidence()
+			"residence" => $entity->getResidence(),
+			"hash" => $entity->getHash()
 		));
 	}
 
@@ -38,6 +39,18 @@ class EntityDataGateway
 			"SELECT * FROM entitys WHERE email=?"
 		);
 		$statement->bindParam(1, $email, \PDO::PARAM_STR);
+		$statement->execute();
+		$row = $statement->fetch(\PDO::FETCH_ASSOC);
+
+		return $row;
+	}
+
+	public function getEntityByHash(string $hash)
+	{
+		$statement = $this->pdo->prepare(
+			"SELECT * FROM entitys WHERE hash=?"
+		);
+		$statement->bindParam(1, $hash, \PDO::PARAM_STR);
 		$statement->execute();
 		$row = $statement->fetch(\PDO::FETCH_ASSOC);
 

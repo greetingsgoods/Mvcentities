@@ -18,7 +18,7 @@ class EntityValidator
 	{
 		$errors = array();
 
-		$errors["fname"] = $this->validateName($entity->getName());
+		$errors["name"] = $this->validateName($entity->getName());
 		$errors["surname"] = $this->validateSurname($entity->getSurname());
 		$errors["group_number"] = $this->validateGroupNumber($entity->getGroupNumber());
 		$errors["email"] = $this->validateEmail($entity->getEmail());
@@ -81,7 +81,7 @@ class EntityValidator
 	 */
 	private function validateGender(string $gender)
 	{
-		if ($gender !== Entity::GENDER_MALE || $gender !== Entity::GENDER_FEMALE) {
+		if ($gender !== Entity::GENDER_MALE && $gender !== Entity::GENDER_FEMALE) {
 			return "Вы не выбрали свой пол.";
 		}
 
@@ -159,7 +159,7 @@ class EntityValidator
 	 */
 	private function validateResidence(string $residence)
 	{
-		if ($residence !== Entity::RESIDENCE_RESIDENT ||
+		if ($residence !== Entity::RESIDENCE_RESIDENT &&
 			$residence !== Entity::RESIDENCE_NONRESIDENT) {
 			return "Вы не выбрали свое местоположение.";
 		}

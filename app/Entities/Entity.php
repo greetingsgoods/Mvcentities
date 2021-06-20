@@ -11,20 +11,21 @@ class Entity
 	private $birthYear;
 	private $gender;
 	private $residence;
+	private $hash;
 
 	const GENDER_MALE = "m";
 	const GENDER_FEMALE = "f";
 	const RESIDENCE_RESIDENT = "resident";
 	const RESIDENCE_NONRESIDENT = "nonresident";
 
-	public function __construct($name,
-								$surname,
-								$groupNumber,
-								$email,
-								$examScore,
-								$birthYear,
-								$gender,
-								$residence)
+	public function __construct(string $name,
+								string $surname,
+								string $groupNumber,
+								string $email,
+								int $examScore,
+								int $birthYear,
+								string $gender,
+								string $residence)
 	{
 		$this->name = $name;
 		$this->surname = $surname;
@@ -98,5 +99,21 @@ class Entity
 	public function getResidence()
 	{
 		return $this->residence;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHash()
+	{
+		return $this->hash;
+	}
+
+	/**
+	 * @param string $hash
+	 */
+	public function setHash(string $hash)
+	{
+		$this->hash = $hash;
 	}
 }

@@ -1,23 +1,31 @@
 <?php
 namespace EntityList\Controllers;
 
+use EntityList\AuthManager;
 use EntityList\Entities\Entity;
 use EntityList\Database\EntityDataGateway;
 use EntityList\Validators\EntityValidator;
+use EntityList\Helpers\Util;
 
 
 class RegisterController extends BaseController
 {
 	private $gateway;
 	private $validator;
+	private $util;
+	private $authManager;
 
 	public function __construct(string $requestType,
 								EntityDataGateway $gateway,
-								EntityValidator $validator)
+								EntityValidator $validator,
+								Util $util,
+								AuthManager $authManager)
 	{
 		$this->requestType = $requestType;
 		$this->gateway = $gateway;
 		$this->validator = $validator;
+		$this->util = $util;
+		$this->authManager = $authManager;
 	}
 
 	private function processGetRequest()
@@ -28,6 +36,26 @@ class RegisterController extends BaseController
 	private function processPostRequest()
 	{
 		$values = $this->grabPostValues();
+		$entity = $this->createEntity($values);
+		$errors = $this->validator->validateAllFields($entity);
+
+		if (empty($errors)) {
+			$hash = $this->util->generateHash();
+			$entity->setHash($hash);
+			$this->gateway->insertEntity($entity);
+			$this->authManager->logIn($hash);
+			echo "Успех!";
+		} else {
+			// Re-render the form passing $errors and $values arrays
+			$params["values"] = $values;
+			$params["errors"] = $errors;
+			$this->render(__DIR__ . "/../../views/register.view.php", $params);
+		}
+
+	}
+
+	private function createEntity(array $values)
+	{
 		$entity = new Entity(
 			$values["name"],
 			$values["surname"],
@@ -38,17 +66,8 @@ class RegisterController extends BaseController
 			$values["gender"],
 			$values["residence"]
 		);
-		$errors = $this->validator->validateAllFields($entity);
 
-		if (empty($errors)) {
-			$this->gateway->insertEntity($entity);
-			echo "Успех!";
-		} else {
-			echo "Что-то пошло не так...";
-			echo "<br><br>";
-			var_dump($errors);
-		}
-
+		return $entity;
 	}
 
 	private function grabPostValues()
@@ -83,8 +102,9 @@ class RegisterController extends BaseController
 		return $values;
 	}
 
-	private function render($file)
+	private function render($file, $params = [])
 	{
+		extract($params, EXTR_SKIP);
 		return require_once "{$file}";
 	}
 
