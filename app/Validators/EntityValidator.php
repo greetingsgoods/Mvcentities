@@ -1,5 +1,4 @@
 <?php
-
 namespace EntityList\Validators;
 
 use EntityList\Entities\Entity;

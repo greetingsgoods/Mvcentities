@@ -1,5 +1,4 @@
-﻿<?php
-
+<?php
 namespace EntityList\Entities;
 
 class Entity
