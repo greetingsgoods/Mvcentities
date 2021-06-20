@@ -1,5 +1,4 @@
 <?php
-
 use EntityList\Router;
 
 require_once "../vendor/autoload.php";

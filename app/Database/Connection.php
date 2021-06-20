@@ -1,5 +1,4 @@
 <?php
-
 namespace EntityList\Database;
 
 class Connection

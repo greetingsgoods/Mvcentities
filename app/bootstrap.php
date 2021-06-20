@@ -1,5 +1,4 @@
 <?php
-
 use EntityList\App;
 use EntityList\Database\{Connection, EntityDataGateway};
 

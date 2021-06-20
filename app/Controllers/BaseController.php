@@ -1,10 +1,9 @@
 <?php
-
 namespace EntityList\Controllers;
 
 abstract class BaseController
 {
-	protected $requestType;
+    protected $requestType;
 
 	abstract public function run();
 }
