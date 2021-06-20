@@ -1,7 +1,11 @@
 <?php
-require_once "../Views/header.php";
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    echo "You've submitted the form.";
-}
-require_once "../Views/entity_form.php";
-require_once "../Views/footer.php";
+
+use EntityList\Router;
+
+require_once "../vendor/autoload.php";
+require_once "../app/bootstrap.php";
+
+$router = new Router();
+$router->define(require_once "../routes.php");
+$controller = $router->getController("");
+
