@@ -3,8 +3,8 @@ namespace EntityList\Controllers;
 
 abstract class BaseController
 {
-    protected $requestType;
+	protected $requestMethod;
 	protected $action;
 
-    abstract public function run();
+	abstract public function run();
 }

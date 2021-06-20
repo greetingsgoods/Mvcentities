@@ -33,6 +33,33 @@ class EntityDataGateway
 		));
 	}
 
+	public function updateEntity(Entity $entity)
+	{
+		$statement = $this->pdo->prepare(
+			"UPDATE entitys 
+                     SET `name` = :name,
+                         `surname` = :sname,
+                         `gender` = :gender,
+                         `group_number` = :groupnum,
+                         `email` = :email,
+                         `exam_score` = :examscore,
+                         `birth_year` = :byear,
+                         `residence` = :residence
+                     WHERE `hash` = :hash"
+		);
+		$statement->execute(array(
+			"name" => $entity->getName(),
+			"sname" => $entity->getSurname(),
+			"gender" => $entity->getGender(),
+			"groupnum" => $entity->getGroupNumber(),
+			"email" => $entity->getEmail(),
+			"examscore" => $entity->getExamScore(),
+			"byear" => $entity->getBirthYear(),
+			"residence" => $entity->getResidence(),
+			"hash" => $entity->getHash()
+		));
+	}
+
 	public function getEntityByEmail(string $email)
 	{
 		$statement = $this->pdo->prepare(

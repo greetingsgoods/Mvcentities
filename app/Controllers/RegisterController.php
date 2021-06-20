@@ -5,7 +5,7 @@ use EntityList\AuthManager;
 use EntityList\Entities\Entity;
 use EntityList\Database\EntityDataGateway;
 use EntityList\Validators\EntityValidator;
-use EntityList\Helpers\Util;
+use EntityList\Helpers\{Util, UrlManager};
 
 
 class RegisterController extends BaseController
@@ -14,29 +14,33 @@ class RegisterController extends BaseController
 	private $validator;
 	private $util;
 	private $authManager;
+	private $urlManager;
 
-	public function __construct(string $requestType,
+	public function __construct(string $requestMethod,
 								EntityDataGateway $gateway,
 								EntityValidator $validator,
 								Util $util,
-								AuthManager $authManager)
+								AuthManager $authManager,
+								UrlManager $urlManager)
 	{
-		$this->requestType = $requestType;
+		$this->requestMethod = $requestMethod;
 		$this->gateway = $gateway;
 		$this->validator = $validator;
 		$this->util = $util;
 		$this->authManager = $authManager;
+		$this->urlManager = $urlManager;
 	}
 
 	private function processGetRequest()
 	{
-		$this->render(__DIR__ . "/../../views/register.view.php");
+		$params["formAction"] = "register";
+		$this->render(__DIR__ . "/../../views/register.view.php", $params);
 	}
 
 	private function processPostRequest()
 	{
 		$values = $this->grabPostValues();
-		$entity = $this->createEntity($values);
+		$entity = $this->util->createEntity($values);
 		$errors = $this->validator->validateAllFields($entity);
 
 		if (empty($errors)) {
@@ -44,30 +48,15 @@ class RegisterController extends BaseController
 			$entity->setHash($hash);
 			$this->gateway->insertEntity($entity);
 			$this->authManager->logIn($hash);
-			echo "Успех!";
+			$this->urlManager->redirect("/?notify=1");
 		} else {
 			// Re-render the form passing $errors and $values arrays
+			$params["formAction"] = "register";
 			$params["values"] = $values;
 			$params["errors"] = $errors;
 			$this->render(__DIR__ . "/../../views/register.view.php", $params);
 		}
 
-	}
-
-	private function createEntity(array $values)
-	{
-		$entity = new Entity(
-			$values["name"],
-			$values["surname"],
-			$values["group_number"],
-			$values["email"],
-			$values["exam_score"],
-			$values["birth_year"],
-			$values["gender"],
-			$values["residence"]
-		);
-
-		return $entity;
 	}
 
 	private function grabPostValues()
@@ -110,7 +99,14 @@ class RegisterController extends BaseController
 
 	public function run()
 	{
-		if ($this->requestType === "GET") {
+		// Check if user is not logged in first
+		if ($this->authManager->checkIfAuthorized()) {
+			// If he is we redirect to the profile page
+			// $this->urlManager->redirect("/");
+			$this->urlManager->redirect("/profile");
+		}
+
+		if ($this->requestMethod === "GET") {
 			$this->processGetRequest();
 		} else {
 			$this->processPostRequest();
