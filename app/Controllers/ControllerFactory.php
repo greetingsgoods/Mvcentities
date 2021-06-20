@@ -14,7 +14,11 @@ class ControllerFactory
 
 		switch ($controllerName) {
 			case "HomeController":
-				$controller = new HomeController($requestMethod);
+				$controller = new HomeController(
+					$requestMethod,
+					$DIContainer->get("pager"),
+					$DIContainer->get("entityDataGateway")
+				);
 				break;
 			case "RegisterController":
 				$controller = new RegisterController(

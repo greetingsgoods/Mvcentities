@@ -1,7 +1,7 @@
 <?php
 use EntityList\{App, AuthManager};
 use EntityList\Validators\EntityValidator;
-use EntityList\Helpers\{UrlManager, Util};
+use EntityList\Helpers\{UrlManager, Util, Pager};
 use EntityList\Database\{Connection, EntityDataGateway};
 
 $app = new App();
@@ -16,6 +16,7 @@ $app->bind("entityValidator", new EntityValidator(
 ));
 $app->bind("urlManager", new UrlManager());
 $app->bind("util", new Util());
+$app->bind("pager", new Pager());
 
 
 

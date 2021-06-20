@@ -13,6 +13,9 @@ class EntityDataGateway
 		$this->pdo = $pdo;
 	}
 
+	/**
+	 * @param Entity $entity
+	 */
 	public function insertEntity(Entity $entity)
 	{
 		$statement = $this->pdo->prepare(
@@ -33,6 +36,9 @@ class EntityDataGateway
 		));
 	}
 
+	/**
+	 * @param Entity $entity
+	 */
 	public function updateEntity(Entity $entity)
 	{
 		$statement = $this->pdo->prepare(
@@ -60,6 +66,10 @@ class EntityDataGateway
 		));
 	}
 
+	/**
+	 * @param string $email
+	 * @return mixed
+	 */
 	public function getEntityByEmail(string $email)
 	{
 		$statement = $this->pdo->prepare(
@@ -67,11 +77,40 @@ class EntityDataGateway
 		);
 		$statement->bindParam(1, $email, \PDO::PARAM_STR);
 		$statement->execute();
-		$row = $statement->fetch(\PDO::FETCH_ASSOC);
 
-		return $row;
+		return $statement->fetch(\PDO::FETCH_ASSOC);
 	}
 
+	/**
+	 * @return int
+	 */
+	public function countTableRows(): int
+	{
+		$statement = $this->pdo->prepare(
+			"SELECT count(*) FROM entitys"
+		);
+		$statement->execute();
+
+		return (int)$statement->fetchColumn();
+	}
+
+	public function getEntitys(int $offset, int $limit)
+	{
+		$statement = $this->pdo->prepare(
+			"SELECT name, surname, group_number, exam_score
+                     FROM entitys
+                     LIMIT {$offset}, {$limit}   
+          "
+		);
+		$statement->execute();
+
+		return $statement->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
+	/**
+	 * @param string $hash
+	 * @return mixed
+	 */
 	public function getEntityByHash(string $hash)
 	{
 		$statement = $this->pdo->prepare(
@@ -79,8 +118,7 @@ class EntityDataGateway
 		);
 		$statement->bindParam(1, $hash, \PDO::PARAM_STR);
 		$statement->execute();
-		$row = $statement->fetch(\PDO::FETCH_ASSOC);
 
-		return $row;
+		return $statement->fetch(\PDO::FETCH_ASSOC);
 	}
 }
