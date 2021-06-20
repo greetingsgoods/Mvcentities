@@ -1,11 +1,13 @@
-﻿﻿<?php
+<?php
+
+namespace EntityList\Database;
 
 class EntityDataGateway
 {
 	private $dbh;
 
 	// Getting pdo object to work with
-	public function __construct(PDO $pdo)
+	public function __construct(\PDO $pdo)
 	{
 		$this->dbh = $pdo;
 	}
@@ -13,9 +15,9 @@ class EntityDataGateway
 	public function getUserByEmail(string $email)
 	{
 		$stmt = $this->dbh->prepare("SELECT * FROM entitys WHERE email=?");
-		$stmt->bindParam(1, $email, PDO::PARAM_STR);
+		$stmt->bindParam(1, $email, \PDO::PARAM_STR);
 		$stmt->execute();
-		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
 		return $row;
 	}

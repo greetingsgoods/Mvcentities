@@ -33,6 +33,7 @@ upload/
 *.DS_Store
 robots.txt
 web.config
+config.php
 log.txt
 /sitemap*
 cgi-bin/
@@ -40,6 +41,7 @@ cgi-bin/
 .bash_history
 /local.zip
 *node_modules*
+/vendor/
 
 # IDE
 .idea

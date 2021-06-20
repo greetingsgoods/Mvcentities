@@ -1,0 +1,9 @@
+{
+    "name": "local/entity-list",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "EntityList\\": "app/"
+        }
+    }
+}
