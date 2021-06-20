@@ -156,17 +156,36 @@ class EntityValidator
 	 */
 	private function validateEmail(string $email)
 	{
+		$isAuth = $this->authManager->checkIfAuthorized();
+
 		if (mb_strlen($email) === 0) {
 			return "Вы не заполнили обязательное поле \"E-mail\".";
 		} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			// Validating email with the built-in function "filter_var"
 			return "E-mail должен быть в формате \"example@domain.com\".";
-		} elseif (!$this->authManager->checkIfAuthorized() &&
-			$this->entityDataGateway->checkIfEmailExists($email) !== 0) {
-			return "Такой e-mail уже существует.";
+		}
+
+		if ($this->entityDataGateway->checkIfEmailExists($email)) {
+			return $isAuth ? $this->validateEmailIfAuth($email) :
+				"Такой e-mail уже существует.";
 		}
 
 		return true;
+	}
+
+	/**
+	 * Validates e-mail if user is editing his/her profile
+	 *
+	 * @param string $email
+	 * @return bool|string
+	 */
+	private function validateEmailIfAuth(string $email)
+	{
+		$currentEntityEmail = $this->entityDataGateway->getEntityByHash(
+			$this->authManager->getHash()
+		)["email"];
+
+		return ($email === $currentEntityEmail) ? true : "Такой e-mail уже существует";
 	}
 
 	/**

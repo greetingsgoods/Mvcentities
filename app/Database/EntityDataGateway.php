@@ -23,8 +23,10 @@ class EntityDataGateway
 	 * Inserts new Entity into `entitys` table
 	 *
 	 * @param Entity $entity
+	 *
+	 * @return void
 	 */
-	public function insertEntity(Entity $entity)
+	public function insertEntity(Entity $entity): void
 	{
 		$statement = $this->pdo->prepare(
 			"INSERT INTO entitys(name, surname, gender, group_number, 
@@ -48,8 +50,10 @@ class EntityDataGateway
 	 * Updates a entity row in `entitys` table
 	 *
 	 * @param Entity $entity
+	 *
+	 * @return void
 	 */
-	public function updateEntity(Entity $entity)
+	public function updateEntity(Entity $entity): void
 	{
 		$statement = $this->pdo->prepare(
 			"UPDATE entitys 
@@ -81,9 +85,9 @@ class EntityDataGateway
 	 *
 	 * @param string $email
 	 *
-	 * @return int
+	 * @return bool
 	 */
-	public function checkIfEmailExists(string $email): int
+	public function checkIfEmailExists(string $email): bool
 	{
 		$statement = $this->pdo->prepare(
 			"SELECT COUNT(*) FROM entitys WHERE email=?"
@@ -91,7 +95,9 @@ class EntityDataGateway
 		$statement->bindParam(1, $email, \PDO::PARAM_STR);
 		$statement->execute();
 
-		return (int)$statement->fetchColumn();
+		$rowCount = (int)$statement->fetchColumn();
+
+		return $rowCount > 0 ? true : false;
 	}
 
 	/**
