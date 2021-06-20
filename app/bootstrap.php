@@ -1,5 +1,4 @@
 <?php
-
 use EntityList\App;
 use EntityList\Validators\EntityValidator;
 use EntityList\Helpers\UrlManager;
@@ -12,4 +11,5 @@ $app->bind("connection", (new Connection)->make($app->get("config")));
 $app->bind("entityDataGateway", new EntityDataGateway($app->get("connection")));
 $app->bind("entityValidator", new EntityValidator($app->get("entityDataGateway")));
 $app->bind("urlManager", new UrlManager());
+
 
