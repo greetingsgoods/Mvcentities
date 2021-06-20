@@ -37,7 +37,6 @@ class ProfileController extends BaseController
 		// Fetching entity data from the database and preparing it for passing into view
 		$entityData = $this->gateway->getEntityByHash($_COOKIE["hash"]);
 		$params["values"] = $entityData;
-		$params["formAction"] = "edit";
 
 		if ($this->action === "edit") {
 			$this->render(__DIR__ . "/../../views/register.view.php", $params);

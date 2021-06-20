@@ -138,7 +138,7 @@ class EntityValidator
 			// Validating email with the built-in function "filter_var"
 			return "E-mail должен быть в формате \"example@domain.com\".";
 		} elseif (!$this->authManager->checkIfAuthorized() &&
-			$this->entityDataGateway->getEntityByEmail($email)) {
+			$this->entityDataGateway->checkIfEmailExists($email) !== 0) {
 			return "Такой e-mail уже существует.";
 		}
 
