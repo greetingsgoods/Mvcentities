@@ -2,6 +2,8 @@
 
 namespace EntityList;
 
+use EntityList\Controllers\ControllerFactory;
+
 class Router
 {
 	private $routes = [];
@@ -16,14 +18,21 @@ class Router
 
 	/**
 	 * @param string $uri
-	 * @return mixed
+	 * @param string $requestType
+	 * @return null|Controllers\HomeController|Controllers\RegisterController
 	 * @throws \Exception
 	 */
-	public function getController(string $uri)
+	public function getController(string $uri, string $requestType, App $DIContainer)
 	{
 		if (array_key_exists($uri, $this->routes)) {
-			$controllerName = "\\EntityList\\Controllers\\{$this->routes[$uri]}";
-			return new $controllerName;
+			$controllerName = $this->routes[$uri];
+			$controller = ControllerFactory::makeController(
+				$controllerName,
+				$requestType,
+				$DIContainer
+			);
+
+			return $controller;
 		}
 
 		throw new \Exception("No route defined for this URI.");

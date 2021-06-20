@@ -6,12 +6,12 @@ use EntityList\Database\EntityDataGateway;
 
 class EntityValidator
 {
-	private $sdg;
+	private $entityDataGateway;
 
-	public function __construct(EntityDataGateway $sdg)
+	public function __construct(EntityDataGateway $entityDataGateway)
 	{
 		// Injecting EntityDataGateway object for assistance with email validation
-		$this->sdg = $sdg;
+		$this->entityDataGateway = $entityDataGateway;
 	}
 
 	public function validateAllFields(Entity $entity)
@@ -27,14 +27,10 @@ class EntityValidator
 		$errors["gender"] = $this->validateGender($entity->getGender());
 		$errors["residence"] = $this->validateResidence($entity->getResidence());
 
-		// Looping through the errors array and removing all "true" values
-		foreach ($errors as $field => $error) {
-			if ($error === true) {
-				unset($errors[$field]);
-			}
-		}
-
-		return $errors;
+		// Removing correct fields from the errors array
+		return array_filter($errors, function ($value) {
+			return $value !== true;
+		});
 	}
 
 	/**
@@ -105,7 +101,8 @@ class EntityValidator
 		if ($groupNumberLength === 0) {
 			return "Вы не заполнили обязательное поле \"Номер группы\"";
 		} elseif ($groupNumberLength < 2 || $groupNumberLength > 5) {
-			return "Количество символов в номере группы должно находиться в интервале от 2 до 5, а Вы ввели {$groupNumberLength}";
+			return "Количество символов в номере группы должно находиться
+                    в интервале от 2 до 5, а Вы ввели {$groupNumberLength}";
 		} elseif (!(preg_match($pattern, $groupNumber))) {
 			return "Номер группы может содержать только цифры и русские буквы.";
 		}
@@ -136,7 +133,7 @@ class EntityValidator
 		} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			// Validating email with the built-in function "filter_var"
 			return "E-mail должен быть в формате \"example@domain.com\".";
-		} elseif (!$this->sdg->getUserByEmail($email)) {
+		} elseif ($this->entityDataGateway->getUserByEmail($email)) {
 			return "Такой e-mail уже существует.";
 		}
 
@@ -162,7 +159,8 @@ class EntityValidator
 	 */
 	private function validateResidence(string $residence)
 	{
-		if ($residence !== Entity::RESIDENCE_RESIDENT || $residence !== Entity::RESIDENCE_NONRESIDENT) {
+		if ($residence !== Entity::RESIDENCE_RESIDENT ||
+			$residence !== Entity::RESIDENCE_NONRESIDENT) {
 			return "Вы не выбрали свое местоположение.";
 		}
 
