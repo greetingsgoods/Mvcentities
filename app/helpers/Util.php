@@ -1,5 +1,4 @@
 <?php
-
 namespace EntityList\Helpers;
 
 class Util

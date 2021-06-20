@@ -16,7 +16,7 @@ class EntityDataGateway
 	public function insertEntity(Entity $entity)
 	{
 		$statement = $this->pdo->prepare(
-			"INSERT INTO entitys(first_name, surname, gender, group_number, 
+			"INSERT INTO entitys(name, surname, gender, group_number, 
                                             email, exam_score, birth_year, residence, hash)
                        VALUES (:name, :sname, :gender, :groupnum, :email, :examscore, :byear, :residence, :hash)"
 		);

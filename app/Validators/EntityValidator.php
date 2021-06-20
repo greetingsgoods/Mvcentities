@@ -1,17 +1,21 @@
 <?php
 namespace EntityList\Validators;
 
+use EntityList\AuthManager;
 use EntityList\Entities\Entity;
 use EntityList\Database\EntityDataGateway;
 
 class EntityValidator
 {
 	private $entityDataGateway;
+	private $authManager;
 
-	public function __construct(EntityDataGateway $entityDataGateway)
+	public function __construct(EntityDataGateway $entityDataGateway, AuthManager $authManager)
 	{
-		// Injecting EntityDataGateway object for assistance with email validation
+		// Injecting EntityDataGateway and AuthManager for assistance with email validation
 		$this->entityDataGateway = $entityDataGateway;
+		$this->authManager = $authManager;
+
 	}
 
 	public function validateAllFields(Entity $entity)
@@ -133,7 +137,8 @@ class EntityValidator
 		} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			// Validating email with the built-in function "filter_var"
 			return "E-mail должен быть в формате \"example@domain.com\".";
-		} elseif ($this->entityDataGateway->getEntityByEmail($email)) {
+		} elseif (!$this->authManager->checkIfIsAuthorized() &&
+			$this->entityDataGateway->getEntityByEmail($email)) {
 			return "Такой e-mail уже существует.";
 		}
 
