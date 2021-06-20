@@ -4,6 +4,8 @@ namespace EntityList\Database;
 class Connection
 {
 	/**
+	 * Establishes PDO connection via data passed through $config
+	 *
 	 * @param array $config
 	 * @return \PDO
 	 */

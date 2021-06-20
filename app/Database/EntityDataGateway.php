@@ -5,15 +5,23 @@ use EntityList\Entities\Entity;
 
 class EntityDataGateway
 {
+	/**
+	 * @var \PDO
+	 */
 	private $pdo;
 
-	// Getting pdo object to work with
+	/**
+	 * EntityDataGateway constructor.
+	 * @param \PDO $pdo
+	 */
 	public function __construct(\PDO $pdo)
 	{
 		$this->pdo = $pdo;
 	}
 
 	/**
+	 * Inserts new Entity into `entitys` table
+	 *
 	 * @param Entity $entity
 	 */
 	public function insertEntity(Entity $entity)
@@ -37,6 +45,8 @@ class EntityDataGateway
 	}
 
 	/**
+	 * Updates a entity row in `entitys` table
+	 *
 	 * @param Entity $entity
 	 */
 	public function updateEntity(Entity $entity)
@@ -67,7 +77,10 @@ class EntityDataGateway
 	}
 
 	/**
+	 * Returns a number of records found containing $email
+	 *
 	 * @param string $email
+	 *
 	 * @return int
 	 */
 	public function checkIfEmailExists(string $email): int
@@ -82,6 +95,8 @@ class EntityDataGateway
 	}
 
 	/**
+	 * Returns a number of rows in the `entitys` table
+	 *
 	 * @return int
 	 */
 	public function countTableRows(): int
@@ -94,6 +109,13 @@ class EntityDataGateway
 		return (int)$statement->fetchColumn();
 	}
 
+	/**
+	 * Returns a number of rows containing $keywords
+	 *
+	 * @param string $keywords
+	 *
+	 * @return int
+	 */
 	public function countSearchRows(string $keywords): int
 	{
 		$statement = $this->pdo->prepare(
@@ -107,6 +129,16 @@ class EntityDataGateway
 		return (int)$statement->fetchColumn();
 	}
 
+	/**
+	 * Returns an array of entity rows
+	 *
+	 * @param int $offset
+	 * @param int $limit
+	 * @param string $orderBy Field to order by
+	 * @param string $sort Ordering direction
+	 *
+	 * @return array
+	 */
 	public function getEntitys(int $offset, int $limit, string $orderBy, string $sort)
 	{
 		$sortingParams = $this->sanitizeSortingParams($orderBy, $sort);
@@ -125,6 +157,17 @@ class EntityDataGateway
 		return $statement->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
+	/**
+	 * Returns an array of entity rows found by $keywords
+	 *
+	 * @param string $keywords String to search for
+	 * @param int $offset
+	 * @param int $limit
+	 * @param string $orderBy Field to order by
+	 * @param string $sort Ordering direction
+	 *
+	 * @return array
+	 */
 	public function searchEntitys(string $keywords, int $offset, int $limit, string $orderBy, string $sort)
 	{
 		$sortingParams = $this->sanitizeSortingParams($orderBy, $sort);
@@ -144,6 +187,14 @@ class EntityDataGateway
 		return $statement->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
+	/**
+	 * Makes sure that ordering parameters don't contain something apart from whitelisted values
+	 *
+	 * @param string $orderBy Field to order by
+	 * @param string $sort Ordering direction
+	 *
+	 * @return array
+	 */
 	private function sanitizeSortingParams(string $orderBy, string $sort)
 	{
 		$orderWhiteList = ["name", "surname", "group_number", "exam_score"];
@@ -165,7 +216,10 @@ class EntityDataGateway
 	}
 
 	/**
+	 * Returns a entity row containing $hash
+	 *
 	 * @param string $hash
+	 *
 	 * @return mixed
 	 */
 	public function getEntityByHash(string $hash)

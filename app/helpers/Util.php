@@ -5,6 +5,11 @@ use EntityList\Entities\Entity;
 
 class Util
 {
+	/**
+	 * @param int $length
+	 *
+	 * @return string
+	 */
 	public function generateHash(int $length = 32)
 	{
 		if ($length <= 8) {
@@ -13,6 +18,11 @@ class Util
 		return bin2hex(random_bytes($length));
 	}
 
+	/**
+	 * @param array $values
+	 *
+	 * @return Entity
+	 */
 	public function createEntity(array $values)
 	{
 		$entity = new Entity(

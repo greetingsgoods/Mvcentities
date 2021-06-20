@@ -10,13 +10,43 @@ use EntityList\Helpers\{Util, UrlManager};
 
 class RegisterController extends BaseController
 {
+	/**
+	 * @var EntityDataGateway
+	 */
 	private $gateway;
+
+	/**
+	 * @var EntityValidator
+	 */
 	private $validator;
+
+	/**
+	 * @var Util
+	 */
 	private $util;
+
+	/**
+	 * @var AuthManager
+	 */
 	private $authManager;
+
+	/**
+	 * @var UrlManager
+	 */
 	private $urlManager;
 
+	/**
+	 * RegisterController constructor.
+	 * @param string $requestMethod
+	 * @param string $action
+	 * @param EntityDataGateway $gateway
+	 * @param EntityValidator $validator
+	 * @param Util $util
+	 * @param AuthManager $authManager
+	 * @param UrlManager $urlManager
+	 */
 	public function __construct(string $requestMethod,
+								string $action,
 								EntityDataGateway $gateway,
 								EntityValidator $validator,
 								Util $util,
@@ -24,6 +54,7 @@ class RegisterController extends BaseController
 								UrlManager $urlManager)
 	{
 		$this->requestMethod = $requestMethod;
+		$this->action = $action;
 		$this->gateway = $gateway;
 		$this->validator = $validator;
 		$this->util = $util;
@@ -31,13 +62,20 @@ class RegisterController extends BaseController
 		$this->urlManager = $urlManager;
 	}
 
-	private function processGetRequest()
+	/**
+	 * Index action.
+	 * Renders registration form
+	 */
+	private function index()
 	{
-		$params["formAction"] = "register";
-		$this->render(__DIR__ . "/../../views/register.view.php", $params);
+		$this->render(__DIR__ . "/../../views/register.view.php");
 	}
 
-	private function processPostRequest()
+	/**
+	 * Store action.
+	 * Storing new entity in the database
+	 */
+	private function store()
 	{
 		$values = $this->grabPostValues();
 		$entity = $this->util->createEntity($values);
@@ -51,13 +89,16 @@ class RegisterController extends BaseController
 			$this->urlManager->redirect("/?notify=1");
 		} else {
 			// Re-render the form passing $errors and $values arrays
-			$params["values"] = $values;
-			$params["errors"] = $errors;
+			$params = compact("values", "errors");
 			$this->render(__DIR__ . "/../../views/register.view.php", $params);
 		}
-
 	}
 
+	/**
+	 * Returns an array of sanitized $_POST values
+	 *
+	 * @return array
+	 */
 	private function grabPostValues()
 	{
 		$values = [];
@@ -90,26 +131,22 @@ class RegisterController extends BaseController
 		return $values;
 	}
 
-	private function render($file, $params = [])
-	{
-		extract($params, EXTR_SKIP);
-		return require_once "{$file}";
-	}
 
+	/**
+	 * Redirecting to /profile if user is not authorized
+	 * Invokes controller's action based on $action property
+	 */
 	public function run()
 	{
-		// Check if user is not logged in first
+		// Checking if user is not logged in first
 		if ($this->authManager->checkIfAuthorized()) {
-			// If he is we redirect to the profile page
-			// $this->urlManager->redirect("/");
+			// If he is redirecting to the profile page
 			$this->urlManager->redirect("/profile");
 		}
 
-		if ($this->requestMethod === "GET") {
-			$this->processGetRequest();
-		} else {
-			$this->processPostRequest();
-		}
+		$action = $this->action;
+
+		$this->$action();
 	}
 }
 

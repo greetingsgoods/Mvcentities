@@ -7,17 +7,35 @@ use EntityList\Database\EntityDataGateway;
 
 class EntityValidator
 {
+	/**
+	 * @var EntityDataGateway
+	 */
 	private $entityDataGateway;
+
+	/**
+	 * @var AuthManager
+	 */
 	private $authManager;
 
+	/**
+	 * EntityValidator constructor.
+	 * @param EntityDataGateway $entityDataGateway
+	 * @param AuthManager $authManager
+	 */
 	public function __construct(EntityDataGateway $entityDataGateway, AuthManager $authManager)
 	{
-		// Injecting EntityDataGateway and AuthManager for assistance with email validation
 		$this->entityDataGateway = $entityDataGateway;
 		$this->authManager = $authManager;
 
 	}
 
+	/**
+	 * Returns an array of validation errors
+	 *
+	 * @param Entity $entity
+	 *
+	 * @return array
+	 */
 	public function validateAllFields(Entity $entity)
 	{
 		$errors = array();
@@ -39,6 +57,7 @@ class EntityValidator
 
 	/**
 	 * @param string $name
+	 *
 	 * @return bool|string
 	 */
 	private function validateName(string $name)
@@ -60,6 +79,7 @@ class EntityValidator
 
 	/**
 	 * @param string $surname
+	 *
 	 * @return bool|string
 	 */
 	private function validateSurname(string $surname)
@@ -81,6 +101,7 @@ class EntityValidator
 
 	/**
 	 * @param string $gender
+	 *
 	 * @return bool|string
 	 */
 	private function validateGender(string $gender)
@@ -94,6 +115,7 @@ class EntityValidator
 
 	/**
 	 * @param string $groupNumber
+	 *
 	 * @return bool|string
 	 */
 	private function validateGroupNumber(string $groupNumber)
@@ -106,7 +128,7 @@ class EntityValidator
 			return "Вы не заполнили обязательное поле \"Номер группы\"";
 		} elseif ($groupNumberLength < 2 || $groupNumberLength > 5) {
 			return "Количество символов в номере группы должно находиться
-                    в интервале от 2 до 5, а Вы ввели {$groupNumberLength}";
+                    в интервале от 2 до 5, а Вы ввели {$groupNumberLength}.";
 		} elseif (!(preg_match($pattern, $groupNumber))) {
 			return "Номер группы может содержать только цифры и русские буквы.";
 		}
@@ -116,18 +138,20 @@ class EntityValidator
 
 	/**
 	 * @param int $examScore
+	 *
 	 * @return bool|string
 	 */
 	private function validateExamScore(int $examScore)
 	{
-		if ($examScore < 90 || $examScore > 300) {
-			return "Баллы ЕГЭ должны находиться в интервале от 90 до 300 включительно.";
+		if ($examScore < 50 || $examScore > 300) {
+			return "Баллы ЕГЭ должны находиться в интервале от 50 до 300 включительно.";
 		}
 		return true;
 	}
 
 	/**
 	 * @param string $email
+	 *
 	 * @return bool|string
 	 */
 	private function validateEmail(string $email)
@@ -147,6 +171,7 @@ class EntityValidator
 
 	/**
 	 * @param int $birthYear
+	 *
 	 * @return bool|string
 	 */
 	private function validateBirthYear(int $birthYear)
@@ -160,6 +185,7 @@ class EntityValidator
 
 	/**
 	 * @param string $residence
+	 *
 	 * @return bool|string
 	 */
 	private function validateResidence(string $residence)

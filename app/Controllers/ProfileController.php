@@ -9,12 +9,41 @@ use EntityList\Validators\EntityValidator;
 
 class ProfileController extends BaseController
 {
+	/**
+	 * @var EntityDataGateway
+	 */
 	private $gateway;
+
+	/**
+	 * @var EntityValidator
+	 */
 	private $validator;
+
+	/**
+	 * @var AuthManager
+	 */
 	private $authManager;
+
+	/**
+	 * @var Util
+	 */
 	private $util;
+
+	/**
+	 * @var UrlManager
+	 */
 	private $urlManager;
 
+	/**
+	 * ProfileController constructor.
+	 * @param string $requestMethod
+	 * @param string $action
+	 * @param EntityDataGateway $entityDataGateway
+	 * @param EntityValidator $entityValidator
+	 * @param AuthManager $authManager
+	 * @param Util $util
+	 * @param UrlManager $urlManager
+	 */
 	public function __construct(string $requestMethod,
 								string $action,
 								EntityDataGateway $entityDataGateway,
@@ -32,40 +61,54 @@ class ProfileController extends BaseController
 		$this->util = $util;
 	}
 
-	private function processGetRequest()
+	/**
+	 * Index action.
+	 * Showing entity's profile
+	 */
+	private function index()
 	{
-		// Fetching entity data from the database and preparing it for passing into view
+		$this->showProfile();
+	}
+
+	/**
+	 * ShowEdit action.
+	 * Showing editing form
+	 */
+	private function showEdit()
+	{
 		$entityData = $this->gateway->getEntityByHash($_COOKIE["hash"]);
 		$params["values"] = $entityData;
 
-		if ($this->action === "edit") {
-			$this->render(__DIR__ . "/../../views/register.view.php", $params);
-		} else {
-			$this->render(__DIR__ . "/../../views/profile.view.php", $params);
-		}
+		$this->render(__DIR__ . "/../../views/register.view.php", $params);
 	}
 
-	private function processPostRequest()
+	/**
+	 * Store action.
+	 * Updates entity if fields are validated. Re-renders editing form otherwise
+	 */
+	private function store()
 	{
-		if ($this->action === "edit") {
-			$values = $this->grabPostValues();
-			$entity = $this->util->createEntity($values);
-			$errors = $this->validator->validateAllFields($entity);
-			$entity->setHash($_COOKIE["hash"]);
+		$values = $this->grabPostValues();
+		$entity = $this->util->createEntity($values);
+		$errors = $this->validator->validateAllFields($entity);
+		$entity->setHash($_COOKIE["hash"]);
 
-			if (empty($errors)) {
-				$this->gateway->updateEntity($entity);
-				$this->urlManager->redirect("/?notify=1");
-			} else {
-				// Re-render the form passing $errors and $values arrays
-				$params["values"] = $values;
-				$params["errors"] = $errors;
-				$this->render(__DIR__ . "/../../views/register.view.php", $params);
-			}
+		if (empty($errors)) {
+			$this->gateway->updateEntity($entity);
+			$this->urlManager->redirect("/?notify=1");
+		} else {
+			// Re-render the form passing $errors and $values arrays
+			$params = compact("values", "errors");
+			$this->render(__DIR__ . "/../../views/register.view.php", $params);
 		}
 	}
 
-	private function grabPostValues()
+	/**
+	 * Returns an array of sanitized $_POST values
+	 *
+	 * @return array
+	 */
+	private function grabPostValues(): array
 	{
 		$values = [];
 
@@ -97,24 +140,29 @@ class ProfileController extends BaseController
 		return $values;
 	}
 
-	private function render($file, $params = [])
+	/**
+	 * Renders the profile page
+	 */
+	private function showProfile()
 	{
-		extract($params, EXTR_SKIP);
-		return require_once "{$file}";
+		$entityData = $this->gateway->getEntityByHash($_COOKIE["hash"]);
+		$params["values"] = $entityData;
+
+		$this->render(__DIR__ . "/../../views/profile.view.php", $params);
 	}
 
+	/**
+	 * Redirecting to /register if user is not authorized
+	 * Invokes controller's action based on $action property
+	 */
 	public function run()
 	{
-		// Check if user is logged in first
 		if (!$this->authManager->checkIfAuthorized()) {
-			// If he's not we redirect to the registration page
 			$this->urlManager->redirect("/register");
 		}
 
-		if ($this->requestMethod === "GET") {
-			$this->processGetRequest();
-		} else {
-			$this->processPostRequest();
-		}
+		$action = $this->action;
+
+		$this->$action();
 	}
 }

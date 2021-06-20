@@ -1,11 +1,35 @@
 <?php use EntityList\Helpers\UrlManager; ?>
-<table>
+<table class="uk-table uk-table-small uk-table-hover uk-table-divider entitys-table">
     <thead>
     <tr>
-        <th>Имя</th>
-        <th>Фамилия</th>
-        <th>Номер группы</th>
-        <th>Баллы ЕГЭ</th>
+        <th><a href="?<?php echo htmlspecialchars(UrlManager::getSortingLink(
+				$page,
+				"name",
+				$order,
+				$direction,
+				$search
+			), ENT_QUOTES); ?>">Имя</a></th>
+        <th><a href="?<?php echo htmlspecialchars(UrlManager::getSortingLink(
+				$page,
+				"surname",
+				$order,
+				$direction,
+				$search
+			), ENT_QUOTES); ?>">Фамилия</a></th>
+        <th><a href="?<?php echo htmlspecialchars(UrlManager::getSortingLink(
+				$page,
+				"group_number",
+				$order,
+				$direction,
+				$search
+			), ENT_QUOTES); ?>">Номер группы</a></th>
+        <th><a href="?<?php echo htmlspecialchars(UrlManager::getSortingLink(
+				$page,
+				"exam_score",
+				$order,
+				$direction,
+				$search
+			), ENT_QUOTES); ?>">Баллы ЕГЭ</a></th>
     </tr>
     </thead>
     <tbody>
@@ -19,12 +43,5 @@
 	<?php endforeach; ?>
     </tbody>
 </table>
-<div class="pagination">
-	<?php for ($i = 1; $i <= $totalPages; $i++): ?>
-        <a href="?page=<?php echo "{$i}" . "&" . htmlspecialchars(UrlManager::getPaginationLink(
-				$order,
-				$direction,
-				$search
-			), ENT_QUOTES); ?>"><?php echo $i; ?></a>
-	<?php endfor; ?>
-</div>
+
+

@@ -1,0 +1,35 @@
+.entitys-table {
+    text-align: center;
+}
+
+.entitys-table th {
+    text-align: center;
+}
+
+.entity-form__field--margin-top {
+    margin-top: 10px;
+}
+
+.error-text {
+    color: #f0506e;
+}
+
+.entitys-list__search--flex {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+}
+
+.entitys-list__search-message--flex {
+    margin-right: auto;
+}
+
+.footer {
+    height: 80px
+}
+
+.footer-container--flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

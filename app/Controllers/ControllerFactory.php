@@ -5,8 +5,15 @@ use EntityList\App;
 
 class ControllerFactory
 {
-	public static function makeController(string $controllerName,
-										  string $requestMethod,
+	/**
+	 * @param string $controllerName
+	 * @param string $requestMethod
+	 * @param string $action
+	 * @param App $DIContainer
+	 * @return null|HomeController|ProfileController|RegisterController
+	 */
+	public static function makeController(string $requestMethod,
+										  string $controllerName,
 										  string $action,
 										  App $DIContainer)
 	{
@@ -16,13 +23,16 @@ class ControllerFactory
 			case "HomeController":
 				$controller = new HomeController(
 					$requestMethod,
+					$action,
 					$DIContainer->get("pager"),
-					$DIContainer->get("entityDataGateway")
+					$DIContainer->get("entityDataGateway"),
+					$DIContainer->get("authManager")
 				);
 				break;
 			case "RegisterController":
 				$controller = new RegisterController(
 					$requestMethod,
+					$action,
 					$DIContainer->get("entityDataGateway"),
 					$DIContainer->get("entityValidator"),
 					$DIContainer->get("util"),
